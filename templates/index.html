@@ -197,6 +197,22 @@
         .result-link:hover {
             text-decoration: underline;
         }
+
+        .form-info {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--accents-5);
+        }
+
+        .duration-info {
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+            color: var(--success);
+        }
+
+        .duration-error {
+            color: var(--error);
+        }
     </style>
 </head>
 <body>
@@ -256,6 +272,11 @@
         </div>
     </div>
 
+    <div class="form-info">
+        <p class="info-text">※ 3分以下の動画のみ対応しています</p>
+        <p class="duration-info" id="duration-info"></p>
+    </div>
+
     <script>
         document.getElementById('processForm').onsubmit = async (e) => {
             e.preventDefault();
@@ -305,6 +326,31 @@
                 document.getElementById('transcription').textContent = transcription;
                 document.getElementById('translation').textContent = translation;
             });
+        });
+
+        document.getElementById('youtube_url').addEventListener('input', async (e) => {
+            const url = e.target.value;
+            const durationInfo = document.getElementById('duration-info');
+            
+            if (url && url.includes('youtube.com')) {
+                try {
+                    const response = await fetch(`/api/validate-url?url=${encodeURIComponent(url)}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const duration = data.duration;
+                        durationInfo.textContent = `動画の長さ: ${duration}秒`;
+                        durationInfo.className = duration <= 180 ? 'duration-info' : 'duration-info duration-error';
+                    } else {
+                        durationInfo.textContent = data.error;
+                        durationInfo.className = 'duration-info duration-error';
+                    }
+                } catch (error) {
+                    durationInfo.textContent = '';
+                }
+            } else {
+                durationInfo.textContent = '';
+            }
         });
     </script>
 </body>

@@ -51,9 +51,13 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 
 # yt-dlpの設定
 ydl_opts = {
-    'format': 'best',
-    'outtmpl': 'downloads/%(id)s.%(ext)s',
-    'keepvideo': True
+    'format': 'worstaudio/worst',  # 音声のみ、最低品質を選択
+    'outtmpl': f'downloads/%(id)s.%(ext)s',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '64',  # 低品質（ファイルサイズ削減）
+    }],
 }
 
 # Whisperモデルの読み込み
@@ -61,6 +65,26 @@ model = whisper.load_model("base")
 
 # 静的ファイルの設定
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+MAX_DURATION_SECONDS = 180  # 3分制限
+
+async def validate_youtube_url(url: str) -> dict:
+    try:
+        with yt_dlp.YoutubeDL() as ydl:
+            info = ydl.extract_info(url, download=False)
+            duration = info.get('duration', 0)
+            
+            if duration > MAX_DURATION_SECONDS:
+                raise ValueError(f"動画の長さは3分以下である必要があります（現在: {duration}秒）")
+            
+            return {
+                'id': info['id'],
+                'title': info.get('title', ''),
+                'duration': duration,
+                'thumbnail': info.get('thumbnail', '')
+            }
+    except Exception as e:
+        raise ValueError(f"無効なURLです: {str(e)}")
 
 @app.on_event("startup")
 async def startup_event():
@@ -137,6 +161,12 @@ async def root(request: Request):
 @app.post("/process")
 async def process_video(youtube_url: str = Form(...)):
     try:
+        # URLの検証と動画情報の取得
+        video_info = await validate_youtube_url(youtube_url)
+        
+        # 処理ステータスの更新
+        logger.info(f"Processing video: {video_info['title']} ({video_info['duration']}秒)")
+        
         # YouTubeからの動画ダウンロード
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(youtube_url, download=True)
@@ -254,6 +284,22 @@ async def get_tags():
             'tags': response.data
         })
     except Exception as e:
+        return JSONResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+@app.get("/api/validate-url")
+async def validate_url(url: str):
+    try:
+        video_info = await validate_youtube_url(url)
+        return JSONResponse({
+            'success': True,
+            'duration': video_info['duration'],
+            'title': video_info['title'],
+            'thumbnail': video_info['thumbnail']
+        })
+    except ValueError as e:
         return JSONResponse({
             'success': False,
             'error': str(e)
