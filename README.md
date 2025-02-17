@@ -52,13 +52,32 @@ uvicorn app:app --reload --port 8001
 - yt-dlp
 
 requirements.txtの更新：
+# Web フレームワーク
 fastapi==0.109.2
 uvicorn==0.27.1
-python-dotenv==1.0.1
-openai==1.12.0
-yt-dlp==2023.12.30
-whisper==1.1.10
-supabase==2.3.1
+
+# 環境変数
+python-dotenv>=1.0.1
+
+# ファイルアップロード
 python-multipart==0.0.7
-jinja2==3.1.3
-httpx==0.26.0
+
+# YouTube動画ダウンロード
+pytube==15.0.0
+yt-dlp==2025.1.26
+
+# HTTP通信
+requests==2.32.3
+aiohttp==3.11.12
+
+# データベース
+supabase==2.13.0
+
+# S3ストレージ
+boto3==1.36.16
+
+# VercelへのDeploy
+bash
+vercel deploy
+
+Production: https://youtube-downloader-hecqo81g1-bonginkan-projects.vercel.app

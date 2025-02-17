@@ -1,28 +1,21 @@
-# Python
+# Dependencies
+node_modules/
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 .Python
 env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual Environment
 venv/
-ENV/
+.env
+
+# Vercel
+.vercel
+.env*.local
+
+# Supabase
+/supabase/.branches
+/supabase/.temp
+.env.keys
 
 # IDE
 .idea/
@@ -30,23 +23,20 @@ ENV/
 *.swp
 *.swo
 
-# Project specific
-downloads/
-outputs/
-.env
-*.mp3
-*.mp4
-*.wav
-*.m4a
-!images/*.png
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
+npm-debug.log*
 
-# Database
-*.db
-*.sqlite3
+# Testing
+coverage/
+.coverage
+htmlcov/
 
-# OS specific
-.DS_Store
-Thumbs.db 
+# Distribution
+dist/
+build/
+*.egg-info/
