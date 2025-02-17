@@ -2,6 +2,8 @@
 
 YouTubeの動画から文字起こしと翻訳を行うWebアプリケーション
 
+![メイン画面](images/main.png)
+
 ## 機能
 
 - YouTube動画のダウンロード

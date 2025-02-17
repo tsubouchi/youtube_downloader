@@ -38,6 +38,7 @@ outputs/
 *.mp4
 *.wav
 *.m4a
+!images/*.png
 
 # Logs
 *.log
