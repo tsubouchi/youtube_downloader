@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>YouTube 文字起こし & 翻訳</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -39,6 +40,7 @@
             font-weight: 600;
             margin-bottom: 2rem;
             background: linear-gradient(to right, #fff, #888);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -159,6 +161,42 @@
                 width: 100%;
             }
         }
+
+        .recent-results {
+            margin-top: 2rem;
+        }
+        
+        .results-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .result-item {
+            padding: 1rem;
+            background: var(--accents-2);
+            border-radius: var(--radius);
+            display: grid;
+            gap: 0.5rem;
+        }
+        
+        .result-title {
+            font-weight: 500;
+        }
+        
+        .result-date {
+            color: var(--accents-5);
+            font-size: 0.9rem;
+        }
+        
+        .result-link {
+            color: var(--success);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .result-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -197,6 +235,25 @@
             英訳結果
         </h2>
         <div id="translation"></div>
+    </div>
+
+    <div class="result-box recent-results">
+        <h2>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            最近の処理結果
+        </h2>
+        <div class="results-list">
+            {% for result in recent_results %}
+            <div class="result-item">
+                <div class="result-title">{{ result.youtube_id }}</div>
+                <div class="result-date">{{ result.created_at[:16].replace('T', ' ') }}</div>
+                <a href="#" class="result-link" data-transcription="{{ result.transcription }}" 
+                   data-translation="{{ result.translation }}">結果を表示</a>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <script>
@@ -239,6 +296,16 @@
                 submitButton.style.opacity = '1';
             }
         };
+
+        document.querySelectorAll('.result-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const transcription = e.target.dataset.transcription;
+                const translation = e.target.dataset.translation;
+                document.getElementById('transcription').textContent = transcription;
+                document.getElementById('translation').textContent = translation;
+            });
+        });
     </script>
 </body>
 </html> 

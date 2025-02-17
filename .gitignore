@@ -20,16 +20,8 @@ var/
 .installed.cfg
 *.egg
 
-# 環境変数
-.env
-
-# プロジェクト固有
-downloads/
-outputs/
-
-# 仮想環境
+# Virtual Environment
 venv/
-.venv/
 ENV/
 
 # IDE
@@ -38,6 +30,22 @@ ENV/
 *.swp
 *.swo
 
-# OS
+# Project specific
+downloads/
+outputs/
+.env
+*.mp3
+*.mp4
+*.wav
+*.m4a
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# OS specific
 .DS_Store
 Thumbs.db 
