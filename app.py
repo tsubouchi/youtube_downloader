@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,7 +44,7 @@ supabase: Client = create_client(
 )
 
 # テンプレートの設定
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=".")
 
 # OpenAI APIキーの設定
 openai.api_key = os.getenv('OPENAI_API_KEY')
@@ -311,6 +311,20 @@ os.makedirs('outputs', exist_ok=True)
 
 # ルーターをアプリケーションに登録
 app.include_router(router)
+
+# エラーハンドリング
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"Global error occurred: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Internal server error occurred", "detail": str(exc)}
+    )
+
+# ヘルスチェックエンドポイント
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 if __name__ == "__main__":
     import uvicorn
