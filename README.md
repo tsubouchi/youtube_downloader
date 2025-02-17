@@ -81,3 +81,111 @@ bash
 vercel deploy
 
 Production: https://youtube-downloader-hecqo81g1-bonginkan-projects.vercel.app
+
+## 環境変数の設定
+
+1. `.env.sample`をコピーして`.env.development`を作成
+```bash
+cp .env.sample .env.development
+```
+
+2. `.env.development`の各環境変数を適切な値に設定
+
+3. 開発サーバーの起動
+```bash
+npm run dev
+```
+
+注意: 本番環境の環境変数はVercelダッシュボードで直接設定されています。
+
+## 環境構築
+
+### Vercel環境の設定
+
+1. 初期設定：
+```bash
+# 既存の設定をクリア
+rm -rf ~/.vercel
+rm -rf .vercel
+vercel logout
+
+# GitHubアカウントでログイン
+vercel login --github
+
+# プロジェクトのリンク
+vercel link
+# プロンプトで以下を選択:
+# - Set up "~/project"? → yes
+# - Which scope? → [your-scope]
+# - Link to existing project? → yes
+# - What's the name of your existing project? → [project-name]
+```
+
+2. 環境変数の設定：
+```bash
+# 基本設定
+vercel env add PYTHONPATH
+# 値: .
+# 環境: [Development, Preview, Production]
+
+vercel env add PYTHONUNBUFFERED
+# 値: 1
+# 環境: [Development, Preview, Production]
+
+# OpenAI API
+vercel env add OPENAI_API_KEY
+# 値: [your-api-key]
+# 環境: [Development, Preview, Production]
+
+# Supabase設定
+vercel env add SUPABASE_URL
+# 値: [your-supabase-url]
+# 環境: [Development, Preview, Production]
+
+vercel env add SUPABASE_KEY
+# 値: [your-supabase-key]
+# 環境: [Development, Preview, Production]
+
+vercel env add DATABASE_URL
+# 値: [your-database-url]
+# 環境: [Development, Preview, Production]
+
+# S3ストレージ設定
+vercel env add S3_STORAGE_URL
+# 値: [your-storage-url]
+# 環境: [Development, Preview, Production]
+
+vercel env add S3_ACCESS_KEY
+# 値: [your-access-key]
+# 環境: [Development, Preview, Production]
+
+vercel env add S3_SECRET_KEY
+# 値: [your-secret-key]
+# 環境: [Development, Preview, Production]
+
+vercel env add S3_REGION
+# 値: [your-region]
+# 環境: [Development, Preview, Production]
+```
+
+3. 環境変数の確認：
+```bash
+vercel env ls
+```
+
+4. デプロイ：
+```bash
+# 開発環境へのデプロイ
+vercel deploy
+
+# プロダクション環境へのデプロイ
+vercel deploy --prod
+```
+
+### 注意点
+- 環境変数を設定する際は、必ず3つの環境（Development, Preview, Production）すべてを選択する
+- 環境変数が重複している場合は、`vercel env rm [変数名]`で削除してから再設定する
+- 機密情報（APIキーなど）は`.gitignore`に含め、GitHubにプッシュしない
+- 環境変数を削除する際は、`vercel env ls`で現在の状態を確認してから行う
+- 環境変数の設定後は、各環境でデプロイをテストして動作確認を行う
+- 重複した環境変数が存在する場合は、古い方を削除して再設定する
